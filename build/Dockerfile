@@ -1,3 +1,3 @@
-FROM quay.io/redhat-cop/build-s2i-executable:latest
+FROM quay.io/theodor2311/build-s2i-executable:latest
 
 ADD build/_output/bin/quay-operator /app/quay-operator

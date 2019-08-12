@@ -1,7 +1,7 @@
 package resources
 
 import (
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/utils"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/utils"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 

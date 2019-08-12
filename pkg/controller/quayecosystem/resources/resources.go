@@ -3,8 +3,8 @@ package resources
 import (
 	"fmt"
 
-	redhatcopv1alpha1 "github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/constants"
+	redhatcopv1alpha1 "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/constants"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

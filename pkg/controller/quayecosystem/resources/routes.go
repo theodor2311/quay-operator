@@ -2,8 +2,8 @@ package resources
 
 import (
 	routev1 "github.com/openshift/api/route/v1"
-	redhatcopv1alpha1 "github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/utils"
+	redhatcopv1alpha1 "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )

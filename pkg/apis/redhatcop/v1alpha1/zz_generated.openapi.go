@@ -13,9 +13,9 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystem":       schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystem(ref),
-		"github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemSpec":   schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystemSpec(ref),
-		"github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemStatus": schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystemStatus(ref),
+		"github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystem":       schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystem(ref),
+		"github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemSpec":   schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystemSpec(ref),
+		"github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemStatus": schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystemStatus(ref),
 	}
 }
 
@@ -46,19 +46,19 @@ func schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystem(ref common.ReferenceCallba
 					},
 					"spec": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemSpec"),
+							Ref: ref("github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemSpec"),
 						},
 					},
 					"status": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemStatus"),
+							Ref: ref("github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemStatus"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemSpec", "github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemSpec", "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
@@ -70,19 +70,19 @@ func schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystemSpec(ref common.ReferenceCa
 				Properties: map[string]spec.Schema{
 					"quay": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.Quay"),
+							Ref: ref("github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.Quay"),
 						},
 					},
 					"redis": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.Redis"),
+							Ref: ref("github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.Redis"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.Quay", "github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.Redis"},
+			"github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.Quay", "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.Redis"},
 	}
 }
 
@@ -122,7 +122,7 @@ func schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystemStatus(ref common.Reference
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Ref: ref("github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemCondition"),
+										Ref: ref("github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemCondition"),
 									},
 								},
 							},
@@ -138,6 +138,6 @@ func schema_pkg_apis_redhatcop_v1alpha1_QuayEcosystemStatus(ref common.Reference
 			},
 		},
 		Dependencies: []string{
-			"github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemCondition"},
+			"github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1.QuayEcosystemCondition"},
 	}
 }

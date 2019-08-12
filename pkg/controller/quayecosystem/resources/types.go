@@ -1,7 +1,7 @@
 package resources
 
 import (
-	redhatcopv1alpha1 "github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1"
+	redhatcopv1alpha1 "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1"
 )
 
 // QuayConfiguration is a wrapper object around a QuayEcosystem that provides the full set of configurable options

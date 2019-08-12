@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem"
 )
 
 func init() {

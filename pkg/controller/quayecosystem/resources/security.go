@@ -1,8 +1,8 @@
 package resources
 
 import (
-	redhatcopv1alpha1 "github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/constants"
+	redhatcopv1alpha1 "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/constants"
 	rbacv1 "k8s.io/api/rbac/v1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

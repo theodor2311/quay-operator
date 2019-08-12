@@ -9,13 +9,13 @@ import (
 
 	routev1 "github.com/openshift/api/route/v1"
 	ossecurityv1 "github.com/openshift/api/security/v1"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/constants"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/logging"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/resources"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/utils"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/constants"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/logging"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/resources"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/utils"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/redhat-cop/quay-operator/pkg/k8sutils"
+	"github.com/theodor2311/quay-operator/pkg/k8sutils"
 
 	appsv1 "k8s.io/api/apps/v1"
 
@@ -23,7 +23,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/redhat-cop/operator-utils/pkg/util"
+	"github.com/theodor2311/operator-utils/pkg/util"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/util/cert"
@@ -288,6 +288,7 @@ func (r *ReconcileQuayEcosystemConfiguration) configurePostgreSQL(meta metav1.Ob
 
 	podName = postgresqlPodsItems[0].Name
 
+	//TODO enhance command to support Postgresql10
 	success, stdout, stderr := k8sutils.ExecIntoPod(r.k8sclient, podName, fmt.Sprintf("echo \"SELECT * FROM pg_available_extensions\" | /opt/rh/rh-postgresql96/root/usr/bin/psql -d %s", r.quayConfiguration.QuayDatabase.Database), "", r.quayConfiguration.QuayEcosystem.Namespace)
 
 	if !success {
@@ -302,6 +303,14 @@ func (r *ReconcileQuayEcosystemConfiguration) configurePostgreSQL(meta metav1.Ob
 
 	if !success {
 		return fmt.Errorf("Failed to add pg_trim extension: %s", stderr)
+	}
+
+	//Create Clair Database
+	//TODO Convert Clair Database to Parameter
+	success, stdout, stderr = k8sutils.ExecIntoPod(r.k8sclient, podName, fmt.Sprintf("echo \"create database clair\" | /opt/rh/rh-postgresql96/root/usr/bin/psql -d %s", r.quayConfiguration.QuayDatabase.Database), "", r.quayConfiguration.QuayEcosystem.Namespace)
+
+	if !success {
+		return fmt.Errorf("Failed to create database clair: %s", stderr)
 	}
 
 	return nil

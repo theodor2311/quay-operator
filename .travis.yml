@@ -1,6 +1,6 @@
 sudo: required
 language: go
-go_import_path: github.com/redhat-cop/quay-operator
+go_import_path: github.com/theodor2311/quay-operator
 go:
 - "1.12"
 
@@ -12,14 +12,14 @@ deploy:
     skip_cleanup: true
     script: make travis-latest-deploy
     on:
-      repo: redhat-cop/quay-operator
+      repo: theodor2311/quay-operator
       branch: master
       tags: false
   - provider: script
     skip_cleanup: true
     script: make travis-release-deploy
     on:
-      repo: redhat-cop/quay-operator
+      repo: theodor2311/quay-operator
       branch: master
       tags: true
   - provider: script

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/constants"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/constants"
 
-	"github.com/redhat-cop/operator-utils/pkg/util"
-	"github.com/redhat-cop/quay-operator/pkg/client"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/logging"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/resources"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/utils"
+	"github.com/theodor2311/operator-utils/pkg/util"
+	"github.com/theodor2311/quay-operator/pkg/client"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/logging"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/resources"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/utils"
 	"k8s.io/client-go/kubernetes"
 
 	kclient "sigs.k8s.io/controller-runtime/pkg/client"

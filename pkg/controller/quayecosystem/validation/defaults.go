@@ -1,10 +1,10 @@
 package validation
 
 import (
-	redhatcopv1alpha1 "github.com/redhat-cop/quay-operator/pkg/apis/redhatcop/v1alpha1"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/constants"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/resources"
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/utils"
+	redhatcopv1alpha1 "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/constants"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/resources"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/utils"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )

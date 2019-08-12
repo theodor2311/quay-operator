@@ -1,7 +1,7 @@
 
 # Image URL to use all building/pushing image targets
 REGISTRY ?= quay.io
-REPOSITORY ?= $(REGISTRY)/redhat-cop/quay-operator
+REPOSITORY ?= $(REGISTRY)/theodor2311/quay-operator
 DEV_TAG ?= dev
 
 IMG := $(REPOSITORY):latest
@@ -12,10 +12,10 @@ BUILD_COMMIT := $(shell ./scripts/build/get-build-commit.sh)
 BUILD_TIMESTAMP := $(shell ./scripts/build/get-build-timestamp.sh)
 BUILD_HOSTNAME := $(shell ./scripts/build/get-build-hostname.sh)
 
-LDFLAGS := "-X github.com/redhat-cop/quay-operator/version.Version=$(VERSION) \
-	-X github.com/redhat-cop/quay-operator/version.Vcs=$(BUILD_COMMIT) \
-	-X github.com/redhat-cop/quay-operator/version.Timestamp=$(BUILD_TIMESTAMP) \
-	-X github.com/redhat-cop/quay-operator/version.Hostname=$(BUILD_HOSTNAME)"
+LDFLAGS := "-X github.com/theodor2311/quay-operator/version.Version=$(VERSION) \
+	-X github.com/theodor2311/quay-operator/version.Vcs=$(BUILD_COMMIT) \
+	-X github.com/theodor2311/quay-operator/version.Timestamp=$(BUILD_TIMESTAMP) \
+	-X github.com/theodor2311/quay-operator/version.Hostname=$(BUILD_HOSTNAME)"
 
 all: manager
 
@@ -25,11 +25,11 @@ native-test: generate fmt vet
 
 # Build manager binary
 manager: generate fmt vet
-	go build -o build/_output/bin/quay-operator  -ldflags $(LDFLAGS) github.com/redhat-cop/quay-operator/cmd/manager
+	go build -o build/_output/bin/quay-operator  -ldflags $(LDFLAGS) github.com/theodor2311/quay-operator/cmd/manager
 
 # Build manager binary
 manager-osx: generate fmt vet
-	go build -o build/_output/bin/quay-operator GOOS=darwin  -ldflags $(LDFLAGS) github.com/redhat-cop/quay-operator/cmd/manager
+	go build -o build/_output/bin/quay-operator GOOS=darwin  -ldflags $(LDFLAGS) github.com/theodor2311/quay-operator/cmd/manager
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet

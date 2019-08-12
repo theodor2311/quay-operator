@@ -13,8 +13,8 @@ import (
 
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
-	"github.com/redhat-cop/quay-operator/pkg/apis"
-	"github.com/redhat-cop/quay-operator/pkg/controller"
+	"github.com/theodor2311/quay-operator/pkg/apis"
+	"github.com/theodor2311/quay-operator/pkg/controller"
 
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	"github.com/operator-framework/operator-sdk/pkg/leader"

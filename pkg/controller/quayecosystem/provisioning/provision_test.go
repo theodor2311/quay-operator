@@ -3,7 +3,7 @@ package provisioning
 import (
 	"testing"
 
-	"github.com/redhat-cop/quay-operator/pkg/controller/quayecosystem/constants"
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/constants"
 	corev1 "k8s.io/api/core/v1"
 )
 
