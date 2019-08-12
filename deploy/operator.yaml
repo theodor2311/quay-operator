@@ -15,7 +15,7 @@ spec:
       serviceAccountName: quay-operator
       containers:
         - name: quay-operator
-          image: quay.io/theodor2311/quay-operator:latest
+          image: github.com/theodor2311/quay-operator:latest
           ports:
           - containerPort: 60000
             name: metrics

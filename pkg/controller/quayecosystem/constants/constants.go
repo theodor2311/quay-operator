@@ -27,6 +27,8 @@ const (
 	LabelComponentConfigValue = "config"
 	// LabelComponentRedisValue is the name of the Redis label
 	LabelComponentRedisValue = "redis"
+	// LabelComponentClairValue is the name of the Clair label
+	LabelComponentClairValue = "clair"
 	// LabelComponentQuayDatabaseValue is the name of the Quay database label
 	LabelComponentQuayDatabaseValue = "quay-database"
 	// LabelQuayCRKey is the label name of the quay custom resource
