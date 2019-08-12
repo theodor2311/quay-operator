@@ -76,6 +76,21 @@ func GetConfigMapSecretName(quayEcosystem *redhatcopv1alpha1.QuayEcosystem) stri
 	//return configSecretName
 }
 
+// GetClairConfigSecretName returns the name of the Clair config secret
+func GetClairConfigSecretName(quayEcosystem *redhatcopv1alpha1.QuayEcosystem) string {
+	return "clair-config-secret"
+}
+
+// GetSecurityScannerKeySecretName returns the name of the security scanner key secret
+func GetSecurityScannerKeySecretName(quayEcosystem *redhatcopv1alpha1.QuayEcosystem) string {
+	return "security-scanner-key-secret"
+}
+
+// GetClairTrustCASecretName returns the name of the Clair trust CA secret
+func GetClairTrustCASecretName(quayEcosystem *redhatcopv1alpha1.QuayEcosystem) string {
+	return "clair-trust-ca-secret"
+}
+
 // GetQuayExtraCertsSecretName returns the name of the Quay extra certs secret
 func GetQuayExtraCertsSecretName(quayEcosystem *redhatcopv1alpha1.QuayEcosystem) string {
 	return "quay-enterprise-cert-secret"
