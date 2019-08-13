@@ -7,7 +7,7 @@ import (
 
 	redhatcopv1alpha1 "github.com/theodor2311/quay-operator/pkg/apis/redhatcop/v1alpha1"
 
-	"github.com/theodor2311/operator-utils/pkg/util"
+	"github.com/redhat-cop/operator-utils/pkg/util"
 	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/logging"
 	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/provisioning"
 	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/resources"

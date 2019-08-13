@@ -5,4 +5,4 @@ metadata:
   namespace: openshift-operator-lifecycle-manager
 spec:
   sourceType: grpc
-  image: quay.io/theodor2311/quay-operator-registry:latest
+  image: quay.io/redhat-cop/quay-operator-registry:latest
