@@ -628,7 +628,7 @@ func (r *ReconcileQuayEcosystemConfiguration) removeQuayRegistryStorage(meta met
 }
 
 func (r *ReconcileQuayEcosystemConfiguration) ManageQuayEcosystemCertificates(meta metav1.ObjectMeta) (*reconcile.Result, error) {
-	fmt.Printf("---------ManageQuayEcosystemCertificates---------")
+
 	configSecretName := resources.GetConfigMapSecretName(r.quayConfiguration.QuayEcosystem)
 
 	meta.Name = configSecretName
@@ -690,7 +690,7 @@ func (r *ReconcileQuayEcosystemConfiguration) ManageClairTrustCA(meta metav1.Obj
 	meta.Name = trustCASecretName
 
 	trustCASecret := &corev1.Secret{}
-	fmt.Printf("TRACE1\n")
+
 	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: trustCASecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, trustCASecret)
 
 	if err != nil {
@@ -702,18 +702,18 @@ func (r *ReconcileQuayEcosystemConfiguration) ManageClairTrustCA(meta metav1.Obj
 		return nil, err
 	}
 
-	fmt.Printf("TRACE2\n")
+	if trustCASecret.Data == nil {
+		trustCASecret.Data = map[string][]byte{}
+	}
 
-	//trustCASecret.Data[constants.ClairTrustCASecretKey] = r.quayConfiguration.QuaySslCertificate
+	trustCASecret.Data[constants.ClairTrustCASecretKey] = r.quayConfiguration.QuaySslCertificate
 
-	fmt.Printf("TRACE3\n")
 	err = r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, trustCASecret)
 
 	if err != nil {
 		logging.Log.Error(err, "Error Updating clair trust CA secret with certificates")
 		return nil, err
 	}
-	fmt.Printf("TRACE4\n")
 	return nil, nil
 }
 

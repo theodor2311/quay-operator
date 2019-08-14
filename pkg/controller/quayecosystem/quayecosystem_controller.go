@@ -152,11 +152,11 @@ func (r *ReconcileQuayEcosystem) Reconcile(request reconcile.Request) (reconcile
 		return *result, nil
 	}
 
-	// result, err = configuration.ManageClairTrustCA(metaObject)
+	result, err = configuration.ManageClairTrustCA(metaObject)
 
-	// if result != nil {
-	// 	return *result, nil
-	// }
+	if result != nil {
+		return *result, nil
+	}
 
 	if quayConfiguration.DeployQuayConfiguration {
 
