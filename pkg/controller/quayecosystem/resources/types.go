@@ -27,6 +27,12 @@ type QuayConfiguration struct {
 	RedisPort     *int32
 	RedisPassword string
 
+	// Security Scanner
+	// SecurityScannerKeyName			string
+	// SecurityScannerKeyService		string
+	// SecurityScannerKeyExpiration		?
+	// SecurityScannerKeyNotes			string
+
 	// Quay
 	QuayHostname                          string
 	QuayConfigHostname                    string

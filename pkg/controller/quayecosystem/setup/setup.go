@@ -134,6 +134,8 @@ func (qm *QuaySetupManager) SetupQuay(quaySetupInstance *QuaySetupInstance) erro
 		Config: map[string]interface{}{},
 	}
 
+	var securityScannerKey client.SecurityScannerKey
+
 	quayConfig.Config["DB_URI"] = fmt.Sprintf("postgresql://%s:%s@%s/%s", quaySetupInstance.quayConfiguration.QuayDatabase.Username, quaySetupInstance.quayConfiguration.QuayDatabase.Password, quaySetupInstance.quayConfiguration.QuayDatabase.Server, quaySetupInstance.quayConfiguration.QuayDatabase.Database)
 
 	err = qm.validateComponent(quaySetupInstance, quayConfig, client.DatabaseValidation)
@@ -186,6 +188,32 @@ func (qm *QuaySetupManager) SetupQuay(quaySetupInstance *QuaySetupInstance) erro
 		logging.Log.Error(err, "Failed to get Quay Configuration")
 		return fmt.Errorf("Failed to get Quay Configuration: %s", err.Error())
 	}
+
+	// var quayKeys client.QuayKeys
+	// _, _, err = quaySetupInstance.setupClient.GetQuayKeys()
+
+	// if err != nil {
+	// 	logging.Log.Error(err, "Failed to get security scanner key")
+	// 	return fmt.Errorf("Failed to get security scanner key: %s", err.Error())
+	// }
+
+	//Setup Security Scanner
+	//TODO Convert to parameter
+	_, securityScannerKey, err = quaySetupInstance.setupClient.CreateSecurityScannerKey(client.QuayCreateSecurityScannerKeyRequest{
+		Name:       "security_scanner Service Key",
+		Service:    "security_scanner",
+		Expiration: nil,
+		Notes:      "Created during setup for service `security_scanner`",
+	})
+
+	if err != nil {
+		logging.Log.Error(err, "Failed to create security scanner key")
+		return fmt.Errorf("Failed to create security scanner key: %s", err.Error())
+	}
+
+	//quayConfig.Config["SECURITY_SCANNER_ENDPOINT"] = quaySetupInstance.quayConfiguration.QuayHostname
+	quayConfig.Config["SECURITY_SCANNER_ISSUER_NAME"] = "security_scanner"
+	quayConfig.Config["FEATURE_SECURITY_SCANNER"] = true
 
 	// Setup Storage
 	distributedStorageConfig := map[string][]interface{}{}

@@ -73,6 +73,17 @@ func (c *QuayClient) GetRegistryStatus() (*http.Response, RegistryStatus, error)
 	return resp, registryStatus, err
 }
 
+// func (c *QuayClient) GetQuayKeys() (*http.Response, QuayKeys, error) {
+// 	req, err := c.newRequest("GET", "/api/v1/superuser/keys", nil)
+// 	if err != nil {
+// 		return nil, QuayKeys{}, err
+// 	}
+// 	var quayKeys QuayKeys
+// 	resp, err := c.do(req, &quayKeys)
+
+// 	return resp, quayKeys, err
+// }
+
 func (c *QuayClient) ValidateDatabase(config QuayConfig) (*http.Response, QuayStatusResponse, error) {
 	req, err := c.newRequest("POST", "/api/v1/superuser/config/validate/database", config)
 	if err != nil {
@@ -126,6 +137,17 @@ func (c *QuayClient) CreateSuperuser(config QuayCreateSuperuserRequest) (*http.R
 	resp, err := c.do(req, &quayStatusResponse)
 
 	return resp, quayStatusResponse, err
+}
+
+func (c *QuayClient) CreateSecurityScannerKey(config QuayCreateSecurityScannerKeyRequest) (*http.Response, SecurityScannerKey, error) {
+	req, err := c.newRequest("POST", "/api/v1/superuser/keys", config)
+	if err != nil {
+		return nil, SecurityScannerKey{}, err
+	}
+	var securityScannerKey SecurityScannerKey
+	resp, err := c.do(req, &securityScannerKey)
+
+	return resp, securityScannerKey, err
 }
 
 func (c *QuayClient) CompleteSetup() (*http.Response, StringValue, error) {
@@ -211,6 +233,7 @@ func (c *QuayClient) newRequest(method, path string, body interface{}) (*http.Re
 		req.Header.Set("Content-Type", "application/json")
 	}
 	req.Header.Set("Accept", "application/json")
+	fmt.Printf("Method: %s, URL: %s Payload: %s Header: %s\n", req.Method, req.URL, req.Body, req.Header)
 	return req, nil
 }
 func (c *QuayClient) do(req *http.Request, v interface{}) (*http.Response, error) {
@@ -231,6 +254,8 @@ func (c *QuayClient) do(req *http.Request, v interface{}) (*http.Response, error
 	} else {
 		err = json.NewDecoder(resp.Body).Decode(v)
 	}
+	respBody, _ := ioutil.ReadAll(resp.Body)
+	fmt.Printf("STATUS_CODE: %d, DECODED: %s\n", resp.StatusCode, respBody)
 	return resp, err
 }
 

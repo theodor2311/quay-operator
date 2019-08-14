@@ -8,9 +8,21 @@ type QuayConfig struct {
 	Config map[string]interface{} `json:"config"`
 }
 
+// type QuayKeys struct {
+// 	Keys []interface{} `json:"keys"`
+// }
+
 type QuayStatusResponse struct {
 	Status bool   `json:"status,omitempty"`
 	Reason string `json:"reason,omitempty"`
+}
+
+type SecurityScannerKey struct {
+	Kid        string `json:"kid"`
+	Name       string `json:"name"`
+	PrivateKey string `json:"private_key"`
+	PublicKey  string `json:"public_key"`
+	Service    string `json:"service"`
 }
 
 type SetupDatabaseResponse struct {
@@ -27,6 +39,13 @@ type QuayCreateSuperuserRequest struct {
 	Password        string `json:"password"`
 	ConfirmPassword string `json:"confirmpassword"`
 	Email           string `json:"email"`
+}
+
+type QuayCreateSecurityScannerKeyRequest struct {
+	Name       string      `json:"name"`
+	Service    string      `json:"service"`
+	Expiration interface{} `json:"expiration"`
+	Notes      string      `json:"notes"`
 }
 
 type ConfigFileStatus struct {

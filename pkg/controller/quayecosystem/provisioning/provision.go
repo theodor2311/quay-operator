@@ -336,6 +336,26 @@ func (r *ReconcileQuayEcosystemConfiguration) createQuayConfigSecret(meta metav1
 	return nil
 }
 
+// func (r *ReconcileQuayEcosystemConfiguration) createSecurityScannerKeySecret(meta metav1.ObjectMeta) error {
+
+// 	configSecretName := resources.GetConfigMapSecretName(r.quayConfiguration.QuayEcosystem)
+
+// 	meta.Name = configSecretName
+
+// 	found := &corev1.Secret{}
+// 	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: configSecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, found)
+
+// 	if err != nil && apierrors.IsNotFound(err) {
+
+// 		return r.reconcilerBase.CreateResourceIfNotExists(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, resources.GetSecretDefinition(meta))
+
+// 	} else if err != nil && !apierrors.IsNotFound(err) {
+// 		return err
+// 	}
+
+// 	return nil
+// }
+
 func (r *ReconcileQuayEcosystemConfiguration) configureAnyUIDSCCs(meta metav1.ObjectMeta) error {
 
 	// Configure Quay Service Account for AnyUID SCC
