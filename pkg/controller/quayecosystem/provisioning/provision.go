@@ -717,6 +717,40 @@ func (r *ReconcileQuayEcosystemConfiguration) ManageClairTrustCA(meta metav1.Obj
 	return nil, nil
 }
 
+func (r *ReconcileQuayEcosystemConfiguration) ManageSecurityScannerKey(meta metav1.ObjectMeta) (*reconcile.Result, error) {
+
+	securityScannerKeySecretName := resources.GetSecurityScannerKeySecretName(r.quayConfiguration.QuayEcosystem)
+
+	meta.Name = securityScannerKeySecretName
+
+	securityScannerKeySecret := &corev1.Secret{}
+
+	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: securityScannerKeySecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, securityScannerKeySecret)
+
+	if err != nil {
+
+		if apierrors.IsNotFound(err) {
+			// Config Secret Not Found. Requeue object
+			return &reconcile.Result{}, nil
+		}
+		return nil, err
+	}
+
+	if securityScannerKeySecret.Data == nil {
+		securityScannerKeySecret.Data = map[string][]byte{}
+	}
+	fmt.Printf("-----SECURITY_SCANNER_KEY: %s/n", r.quayConfiguration.SecurityScannerKeyPrivateKey)
+	securityScannerKeySecret.Data[constants.SecurityScannerKeySecretKey] = []byte(r.quayConfiguration.SecurityScannerKeyPrivateKey)
+
+	err = r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, securityScannerKeySecret)
+
+	if err != nil {
+		logging.Log.Error(err, "Error Updating clair trust CA secret with certificates")
+		return nil, err
+	}
+	return nil, nil
+}
+
 func (r *ReconcileQuayEcosystemConfiguration) quayDeployment(meta metav1.ObjectMeta) error {
 
 	quayDeployment := resources.GetQuayDeploymentDefinition(meta, r.quayConfiguration)

@@ -126,6 +126,8 @@ const (
 
 	// ClairTrustCASecretKey is key in the trust-ca secret representing the Quay CA Certificate
 	ClairTrustCASecretKey = "ca.crt"
+	// SecurityScannerKeySecretKey is key in the trust-ca secret representing the Quay CA Certificate
+	SecurityScannerKeySecretKey = "security_scanner.pem"
 
 	// QuayAppConfigSSLCertificateSecretKey is key in the app-config secret representing the SSL Certificate
 	QuayAppConfigSSLCertificateSecretKey = "ssl.cert"

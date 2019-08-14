@@ -197,6 +197,21 @@ func (r *ReconcileQuayEcosystem) Reconcile(request reconcile.Request) (reconcile
 			logging.Log.Error(err, "Failed to Setup Quay")
 			return r.manageError(quayConfiguration.QuayEcosystem, redhatcopv1alpha1.QuayEcosystemQuaySetupFailure, err)
 		}
+		//Setup security scanner key
+		err = r.quaySetupManager.SetupSecurityScannerKey(quaySetupInstance, &quayConfiguration)
+
+		if err != nil {
+			logging.Log.Error(err, "Failed to Setup security scanner key")
+			return r.manageError(quayConfiguration.QuayEcosystem, redhatcopv1alpha1.QuayEcosystemQuaySetupFailure, err)
+		}
+
+		//Add security scanner key to secret
+		_, err = configuration.ManageSecurityScannerKey(metaObject)
+
+		if err != nil {
+			logging.Log.Error(err, "Failed to add security scanner key to secret")
+			return r.manageError(quayConfiguration.QuayEcosystem, redhatcopv1alpha1.QuayEcosystemQuaySetupFailure, err)
+		}
 
 		// Update flags when setup is completed
 		quayConfiguration.QuayEcosystem.Status.SetupComplete = true
