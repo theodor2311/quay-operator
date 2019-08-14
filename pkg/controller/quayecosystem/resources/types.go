@@ -30,7 +30,7 @@ type QuayConfiguration struct {
 	// Security Scanner
 	// SecurityScannerKeyName			string
 	// SecurityScannerKeyService		string
-	// SecurityScannerKeyExpiration		?
+	// SecurityScannerKeyExpiration		interface{}
 	// SecurityScannerKeyNotes			string
 
 	// Quay

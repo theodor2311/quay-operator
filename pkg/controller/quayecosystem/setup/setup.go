@@ -211,9 +211,11 @@ func (qm *QuaySetupManager) SetupQuay(quaySetupInstance *QuaySetupInstance) erro
 		return fmt.Errorf("Failed to create security scanner key: %s", err.Error())
 	}
 
+	fmt.Printf("KID: %s, Private Key: %s", securityScannerKey.Kid, securityScannerKey.PrivateKey)
+
 	//quayConfig.Config["SECURITY_SCANNER_ENDPOINT"] = quaySetupInstance.quayConfiguration.QuayHostname
 	quayConfig.Config["SECURITY_SCANNER_ISSUER_NAME"] = "security_scanner"
-	quayConfig.Config["FEATURE_SECURITY_SCANNER"] = true
+	//quayConfig.Config["FEATURE_SECURITY_SCANNER"] = true
 
 	// Setup Storage
 	distributedStorageConfig := map[string][]interface{}{}

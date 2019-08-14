@@ -124,6 +124,9 @@ const (
 	// RegistryStorageTypeLocalStorageName is the value of the Local Quay Storage type
 	RegistryStorageTypeLocalStorageName = "LocalStorage"
 
+	// ClairTrustCASecretKey is key in the trust-ca secret representing the Quay CA Certificate
+	ClairTrustCASecretKey = "ca.crt"
+
 	// QuayAppConfigSSLCertificateSecretKey is key in the app-config secret representing the SSL Certificate
 	QuayAppConfigSSLCertificateSecretKey = "ssl.cert"
 	// QuayAppConfigSSLPrivateKeySecretKey is key in the app-config secret representing the SSL Private Key

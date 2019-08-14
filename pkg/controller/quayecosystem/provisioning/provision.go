@@ -54,6 +54,18 @@ func (r *ReconcileQuayEcosystemConfiguration) CoreResourceDeployment(metaObject 
 		return nil, err
 	}
 
+	if err := r.createClairConfigSecret(metaObject); err != nil {
+		return nil, err
+	}
+
+	if err := r.createSecurityScannerKeySecret(metaObject); err != nil {
+		return nil, err
+	}
+
+	if err := r.createClairTrustCASecret(metaObject); err != nil {
+		return nil, err
+	}
+
 	if err := r.createRBAC(metaObject); err != nil {
 		logging.Log.Error(err, "Failed to create RBAC")
 		return nil, err
@@ -336,25 +348,65 @@ func (r *ReconcileQuayEcosystemConfiguration) createQuayConfigSecret(meta metav1
 	return nil
 }
 
-// func (r *ReconcileQuayEcosystemConfiguration) createSecurityScannerKeySecret(meta metav1.ObjectMeta) error {
+func (r *ReconcileQuayEcosystemConfiguration) createClairConfigSecret(meta metav1.ObjectMeta) error {
 
-// 	configSecretName := resources.GetConfigMapSecretName(r.quayConfiguration.QuayEcosystem)
+	configSecretName := resources.GetClairConfigSecretName(r.quayConfiguration.QuayEcosystem)
 
-// 	meta.Name = configSecretName
+	meta.Name = configSecretName
 
-// 	found := &corev1.Secret{}
-// 	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: configSecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, found)
+	found := &corev1.Secret{}
+	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: configSecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, found)
 
-// 	if err != nil && apierrors.IsNotFound(err) {
+	if err != nil && apierrors.IsNotFound(err) {
 
-// 		return r.reconcilerBase.CreateResourceIfNotExists(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, resources.GetSecretDefinition(meta))
+		return r.reconcilerBase.CreateResourceIfNotExists(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, resources.GetSecretDefinition(meta))
 
-// 	} else if err != nil && !apierrors.IsNotFound(err) {
-// 		return err
-// 	}
+	} else if err != nil && !apierrors.IsNotFound(err) {
+		return err
+	}
 
-// 	return nil
-// }
+	return nil
+}
+
+func (r *ReconcileQuayEcosystemConfiguration) createClairTrustCASecret(meta metav1.ObjectMeta) error {
+
+	configSecretName := resources.GetClairTrustCASecretName(r.quayConfiguration.QuayEcosystem)
+
+	meta.Name = configSecretName
+
+	found := &corev1.Secret{}
+	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: configSecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, found)
+
+	if err != nil && apierrors.IsNotFound(err) {
+
+		return r.reconcilerBase.CreateResourceIfNotExists(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, resources.GetSecretDefinition(meta))
+
+	} else if err != nil && !apierrors.IsNotFound(err) {
+		return err
+	}
+
+	return nil
+}
+
+func (r *ReconcileQuayEcosystemConfiguration) createSecurityScannerKeySecret(meta metav1.ObjectMeta) error {
+
+	configSecretName := resources.GetSecurityScannerKeySecretName(r.quayConfiguration.QuayEcosystem)
+
+	meta.Name = configSecretName
+
+	found := &corev1.Secret{}
+	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: configSecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, found)
+
+	if err != nil && apierrors.IsNotFound(err) {
+
+		return r.reconcilerBase.CreateResourceIfNotExists(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, resources.GetSecretDefinition(meta))
+
+	} else if err != nil && !apierrors.IsNotFound(err) {
+		return err
+	}
+
+	return nil
+}
 
 func (r *ReconcileQuayEcosystemConfiguration) configureAnyUIDSCCs(meta metav1.ObjectMeta) error {
 
@@ -576,7 +628,7 @@ func (r *ReconcileQuayEcosystemConfiguration) removeQuayRegistryStorage(meta met
 }
 
 func (r *ReconcileQuayEcosystemConfiguration) ManageQuayEcosystemCertificates(meta metav1.ObjectMeta) (*reconcile.Result, error) {
-
+	fmt.Printf("---------ManageQuayEcosystemCertificates---------")
 	configSecretName := resources.GetConfigMapSecretName(r.quayConfiguration.QuayEcosystem)
 
 	meta.Name = configSecretName
@@ -628,6 +680,40 @@ func (r *ReconcileQuayEcosystemConfiguration) ManageQuayEcosystemCertificates(me
 		return nil, err
 	}
 
+	return nil, nil
+}
+
+func (r *ReconcileQuayEcosystemConfiguration) ManageClairTrustCA(meta metav1.ObjectMeta) (*reconcile.Result, error) {
+
+	trustCASecretName := resources.GetClairTrustCASecretName(r.quayConfiguration.QuayEcosystem)
+
+	meta.Name = trustCASecretName
+
+	trustCASecret := &corev1.Secret{}
+	fmt.Printf("TRACE1\n")
+	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: trustCASecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, trustCASecret)
+
+	if err != nil {
+
+		if apierrors.IsNotFound(err) {
+			// Config Secret Not Found. Requeue object
+			return &reconcile.Result{}, nil
+		}
+		return nil, err
+	}
+
+	fmt.Printf("TRACE2\n")
+
+	//trustCASecret.Data[constants.ClairTrustCASecretKey] = r.quayConfiguration.QuaySslCertificate
+
+	fmt.Printf("TRACE3\n")
+	err = r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, trustCASecret)
+
+	if err != nil {
+		logging.Log.Error(err, "Error Updating clair trust CA secret with certificates")
+		return nil, err
+	}
+	fmt.Printf("TRACE4\n")
 	return nil, nil
 }
 

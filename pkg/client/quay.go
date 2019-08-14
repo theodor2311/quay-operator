@@ -233,6 +233,7 @@ func (c *QuayClient) newRequest(method, path string, body interface{}) (*http.Re
 		req.Header.Set("Content-Type", "application/json")
 	}
 	req.Header.Set("Accept", "application/json")
+	//DEBUG
 	fmt.Printf("Method: %s, URL: %s Payload: %s Header: %s\n", req.Method, req.URL, req.Body, req.Header)
 	return req, nil
 }

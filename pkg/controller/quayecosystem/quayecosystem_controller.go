@@ -13,9 +13,9 @@ import (
 	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/resources"
 	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/setup"
 
+	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/utils"
 	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/validation"
 	"github.com/theodor2311/quay-operator/pkg/k8sutils"
-	"github.com/theodor2311/quay-operator/pkg/controller/quayecosystem/utils"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -151,6 +151,12 @@ func (r *ReconcileQuayEcosystem) Reconcile(request reconcile.Request) (reconcile
 	if result != nil {
 		return *result, nil
 	}
+
+	// result, err = configuration.ManageClairTrustCA(metaObject)
+
+	// if result != nil {
+	// 	return *result, nil
+	// }
 
 	if quayConfiguration.DeployQuayConfiguration {
 
