@@ -4,7 +4,7 @@
 
 Operator to manage the lifecycle of [Quay](https://www.openshift.com/products/quay).
 
-A dirty flok version from "redhat-cop/quay-operator" to create a Quay+Clair instance with shared postgreSQL.
+A dirty fork version from "redhat-cop/quay-operator" to create a Quay+Clair instance with shared postgreSQL.
 
 ## Overview
 
