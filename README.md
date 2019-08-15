@@ -4,6 +4,8 @@
 
 Operator to manage the lifecycle of [Quay](https://www.openshift.com/products/quay).
 
+A dirty flok version from "redhat-cop/quay-operator" to create a Quay+Clair instance with shared postgreSQL.
+
 ## Overview
 
 This repository contains the functionality to provision a Quay ecosystem. Quay is supported by a number of other components, and thus a CustomResourceDefinition called `QuayEcosystem` is used to define the entire architecture. 
