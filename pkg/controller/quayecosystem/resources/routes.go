@@ -74,3 +74,29 @@ func GetQuayRouteDefinition(meta metav1.ObjectMeta, quayEcosystem *redhatcopv1al
 	return route
 
 }
+
+func GetClairRouteDefinition(meta metav1.ObjectMeta, quayEcosystem *redhatcopv1alpha1.QuayEcosystem) *routev1.Route {
+
+	meta.Name = GetClairResourcesName(quayEcosystem)
+
+	route := &routev1.Route{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Route",
+			APIVersion: routev1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: meta,
+		Spec: routev1.RouteSpec{
+			To: routev1.RouteTargetReference{
+				Kind: "Service",
+				Name: meta.Name,
+			},
+			Port: &routev1.RoutePort{
+				TargetPort: intstr.FromInt(6060),
+			},
+		},
+	}
+
+	route.ObjectMeta.Labels = BuildClairResourceLabels(meta.Labels)
+
+	return route
+}

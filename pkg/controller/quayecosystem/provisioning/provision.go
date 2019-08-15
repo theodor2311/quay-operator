@@ -130,6 +130,11 @@ func (r *ReconcileQuayEcosystemConfiguration) CoreResourceDeployment(metaObject 
 		return nil, err
 	}
 
+	if err := r.createClairService(metaObject); err != nil {
+		logging.Log.Error(err, "Failed to create Clair service")
+		return nil, err
+	}
+
 	if err := r.createQuayRoute(metaObject); err != nil {
 		logging.Log.Error(err, "Failed to create Quay route")
 		return nil, err
@@ -137,6 +142,11 @@ func (r *ReconcileQuayEcosystemConfiguration) CoreResourceDeployment(metaObject 
 
 	if err := r.createQuayConfigRoute(metaObject); err != nil {
 		logging.Log.Error(err, "Failed to create Quay Config route")
+		return nil, err
+	}
+
+	if err := r.createClairRoute(metaObject); err != nil {
+		logging.Log.Error(err, "Failed to create Clair route")
 		return nil, err
 	}
 
@@ -150,6 +160,23 @@ func (r *ReconcileQuayEcosystemConfiguration) CoreResourceDeployment(metaObject 
 	}
 
 	return nil, nil
+}
+
+// DeployClair takes care of the deployment
+func (r *ReconcileQuayEcosystemConfiguration) DeployClair(metaObject metav1.ObjectMeta) (*reconcile.Result, error) {
+
+	if err := r.clairDeployment(metaObject); err != nil {
+		logging.Log.Error(err, "Failed to create Clair deployment")
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(2) * time.Second)
+
+	// Verify Deployment
+	deploymentName := resources.GetClairResourcesName(r.quayConfiguration.QuayEcosystem)
+
+	return r.verifyDeployment(deploymentName, r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace)
+
 }
 
 // DeployQuayConfiguration takes care of the deployment of the quay configuration
@@ -507,6 +534,19 @@ func (r *ReconcileQuayEcosystemConfiguration) createQuayConfigService(meta metav
 
 }
 
+func (r *ReconcileQuayEcosystemConfiguration) createClairService(meta metav1.ObjectMeta) error {
+
+	service := resources.GetClairServiceDefinition(meta, r.quayConfiguration.QuayEcosystem)
+
+	err := r.reconcilerBase.CreateResourceIfNotExists(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, service)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 func (r *ReconcileQuayEcosystemConfiguration) createQuayRoute(meta metav1.ObjectMeta) error {
 
 	meta.Name = resources.GetQuayResourcesName(r.quayConfiguration.QuayEcosystem)
@@ -549,6 +589,33 @@ func (r *ReconcileQuayEcosystemConfiguration) createQuayConfigRoute(meta metav1.
 	if err != nil {
 		return err
 	}
+
+	return nil
+
+}
+
+func (r *ReconcileQuayEcosystemConfiguration) createClairRoute(meta metav1.ObjectMeta) error {
+
+	meta.Name = resources.GetClairResourcesName(r.quayConfiguration.QuayEcosystem)
+
+	route := resources.GetClairRouteDefinition(meta, r.quayConfiguration.QuayEcosystem)
+
+	err := r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, route)
+
+	if err != nil {
+		return err
+	}
+
+	time.Sleep(time.Duration(2) * time.Second)
+
+	createdRoute := &routev1.Route{}
+	err = r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: meta.Name, Namespace: r.quayConfiguration.QuayEcosystem.Namespace}, createdRoute)
+
+	if err != nil {
+		return err
+	}
+
+	r.quayConfiguration.ClairHostname = createdRoute.Spec.Host
 
 	return nil
 
@@ -683,6 +750,88 @@ func (r *ReconcileQuayEcosystemConfiguration) ManageQuayEcosystemCertificates(me
 	return nil, nil
 }
 
+func (r *ReconcileQuayEcosystemConfiguration) ManageClairConfig(meta metav1.ObjectMeta) (*reconcile.Result, error) {
+
+	clairConfigSecretName := resources.GetClairConfigSecretName(r.quayConfiguration.QuayEcosystem)
+
+	meta.Name = clairConfigSecretName
+
+	clairConfigSecret := &corev1.Secret{}
+
+	err := r.reconcilerBase.GetClient().Get(context.TODO(), types.NamespacedName{Name: clairConfigSecretName, Namespace: r.quayConfiguration.QuayEcosystem.ObjectMeta.Namespace}, clairConfigSecret)
+
+	if err != nil {
+
+		if apierrors.IsNotFound(err) {
+			// Config Secret Not Found. Requeue object
+			return &reconcile.Result{}, nil
+		}
+		return nil, err
+	}
+
+	if clairConfigSecret.Data == nil {
+		clairConfigSecret.Data = map[string][]byte{}
+	}
+
+	//TODO update paginationkey
+	clairConfig := fmt.Sprintf(
+		`clair:
+  database:
+    type: pgsql
+    options:
+      source: postgresql://%s:%s@%s:5432/clair?sslmode=disable
+      cachesize: 16384
+  api:
+    healthport: 6061
+    port: 6062
+    timeout: 900s
+    paginationkey: "XxoPtCUzrUv4JV5dS+yQ+MdW7yLEJnRMwigVY/bpgtQ="
+  updater:
+    interval: 6h
+    notifier:
+      attempts: 3
+      renotifyinterval: 1h
+      http:
+        endpoint: https://%s/secscan/notify
+        proxy: http://localhost:6063
+jwtproxy:
+  signer_proxy:
+    enabled: true
+    listen_addr: :6063
+    ca_key_file: /certificates/mitm.key # Generated internally, do not change.
+    ca_crt_file: /certificates/mitm.crt # Generated internally, do not change.
+    signer:
+      issuer: security_scanner
+      expiration_time: 5m
+      max_skew: 1m
+      nonce_length: 32
+      private_key:
+        type: preshared
+        options:
+          key_id: %s
+          private_key_path: /clair/config/security_scanner.pem
+  verifier_proxies:
+  - enabled: true
+    listen_addr: :6060
+    verifier:
+      audience: http://%s
+      upstream: http://localhost:6062
+      key_server:
+        type: keyregistry
+        options:
+          registry: https://%s/keys/`, r.quayConfiguration.QuayDatabase.Username, r.quayConfiguration.QuayDatabase.Password, r.quayConfiguration.QuayDatabase.Server, r.quayConfiguration.QuayHostname, r.quayConfiguration.SecurityScannerKeyKid, r.quayConfiguration.ClairHostname, r.quayConfiguration.QuayHostname)
+
+	clairConfigSecret.Data[constants.ClairConfigKey] = []byte(clairConfig)
+
+	err = r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, clairConfigSecret)
+
+	if err != nil {
+		logging.Log.Error(err, "Error Updating clair config secret")
+		return nil, err
+	}
+	return nil, nil
+}
+
 func (r *ReconcileQuayEcosystemConfiguration) ManageClairTrustCA(meta metav1.ObjectMeta) (*reconcile.Result, error) {
 
 	trustCASecretName := resources.GetClairTrustCASecretName(r.quayConfiguration.QuayEcosystem)
@@ -739,13 +888,13 @@ func (r *ReconcileQuayEcosystemConfiguration) ManageSecurityScannerKey(meta meta
 	if securityScannerKeySecret.Data == nil {
 		securityScannerKeySecret.Data = map[string][]byte{}
 	}
-	fmt.Printf("-----SECURITY_SCANNER_KEY: %s/n", r.quayConfiguration.SecurityScannerKeyPrivateKey)
+
 	securityScannerKeySecret.Data[constants.SecurityScannerKeySecretKey] = []byte(r.quayConfiguration.SecurityScannerKeyPrivateKey)
 
 	err = r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, securityScannerKeySecret)
 
 	if err != nil {
-		logging.Log.Error(err, "Error Updating clair trust CA secret with certificates")
+		logging.Log.Error(err, "Error Updating security scanner key secret")
 		return nil, err
 	}
 	return nil, nil
@@ -781,6 +930,20 @@ func (r *ReconcileQuayEcosystemConfiguration) quayConfigDeployment(meta metav1.O
 	quayDeployment := resources.GetQuayConfigDeploymentDefinition(meta, r.quayConfiguration)
 
 	err := r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, quayDeployment)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (r *ReconcileQuayEcosystemConfiguration) clairDeployment(meta metav1.ObjectMeta) error {
+
+	clairDeployment := resources.GetClairDeploymentDefinition(meta, r.quayConfiguration)
+
+	err := r.reconcilerBase.CreateOrUpdateResource(r.quayConfiguration.QuayEcosystem, r.quayConfiguration.QuayEcosystem.Namespace, clairDeployment)
 
 	if err != nil {
 		return err

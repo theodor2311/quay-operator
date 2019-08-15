@@ -36,6 +36,12 @@ func BuildQuayResourceLabels(resourceMap map[string]string) map[string]string {
 	return resourceMap
 }
 
+// BuildClairResourceLabels builds labels for the Clair app resources
+func BuildClairResourceLabels(resourceMap map[string]string) map[string]string {
+	resourceMap[constants.LabelCompoentKey] = constants.LabelComponentClairValue
+	return resourceMap
+}
+
 // BuildQuayConfigResourceLabels builds labels for the Quay config resources
 func BuildQuayConfigResourceLabels(resourceMap map[string]string) map[string]string {
 	resourceMap[constants.LabelCompoentKey] = constants.LabelComponentConfigValue
@@ -57,6 +63,11 @@ func BuildRedisResourceLabels(resourceMap map[string]string) map[string]string {
 // GetQuayResourcesName returns name of Kubernetes resource name
 func GetQuayResourcesName(quayEcosystem *redhatcopv1alpha1.QuayEcosystem) string {
 	return fmt.Sprintf("%s-quay", GetGenericResourcesName(quayEcosystem))
+}
+
+// GetClairResourcesName returns name of Kubernetes resource name
+func GetClairResourcesName(quayEcosystem *redhatcopv1alpha1.QuayEcosystem) string {
+	return fmt.Sprintf("%s-clair", GetGenericResourcesName(quayEcosystem))
 }
 
 // GetQuayConfigResourcesName returns name of Kubernetes resource name

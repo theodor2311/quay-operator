@@ -47,6 +47,9 @@ type QuayConfiguration struct {
 	DeployQuayConfiguration               bool
 	QuaySslCertificate                    []byte
 	QuaySslPrivateKey                     []byte
+
+	//Clair
+	ClairHostname string
 }
 
 // DatabaseConfig is an internal structure representing a database

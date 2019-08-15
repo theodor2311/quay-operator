@@ -104,6 +104,47 @@ func GetQuayConfigServiceDefinition(meta metav1.ObjectMeta, quayEcosystem *redha
 
 }
 
+func GetClairServiceDefinition(meta metav1.ObjectMeta, quayEcosystem *redhatcopv1alpha1.QuayEcosystem) *corev1.Service {
+
+	meta.Name = GetClairResourcesName(quayEcosystem)
+
+	service := &corev1.Service{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Service",
+			APIVersion: corev1.SchemeGroupVersion.String(),
+		},
+		ObjectMeta: meta,
+		Spec: corev1.ServiceSpec{
+			Selector: meta.Labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "6060-tcp",
+					Port:       6060,
+					Protocol:   "TCP",
+					TargetPort: intstr.FromInt(6060),
+				},
+				{
+					Name:       "6061-tcp",
+					Port:       6061,
+					Protocol:   "TCP",
+					TargetPort: intstr.FromInt(6061),
+				},
+			},
+		},
+	}
+
+	service.ObjectMeta.Labels = BuildClairResourceLabels(meta.Labels)
+
+	if quayEcosystem.Spec.Quay.EnableNodePortService {
+		service.Spec.Type = corev1.ServiceTypeNodePort
+	} else {
+		service.Spec.Type = corev1.ServiceTypeClusterIP
+	}
+
+	return service
+
+}
+
 func GetDatabaseServiceResourceDefinition(meta metav1.ObjectMeta, port int) *corev1.Service {
 
 	service := &corev1.Service{

@@ -13,6 +13,7 @@ import (
 type QuayEcosystemSpec struct {
 	Quay  Quay  `json:"quay,omitempty"`
 	Redis Redis `json:"redis,omitempty"`
+	Clair Clair `json:"clair,omitempty"`
 }
 
 // QuayEcosystemPhase defines the phase of lifecycle the operator is running in

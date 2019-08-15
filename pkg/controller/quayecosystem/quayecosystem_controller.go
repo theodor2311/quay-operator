@@ -213,6 +213,14 @@ func (r *ReconcileQuayEcosystem) Reconcile(request reconcile.Request) (reconcile
 			return r.manageError(quayConfiguration.QuayEcosystem, redhatcopv1alpha1.QuayEcosystemQuaySetupFailure, err)
 		}
 
+		//Generate clair config to secret
+		_, err = configuration.ManageClairConfig(metaObject)
+
+		if err != nil {
+			logging.Log.Error(err, "Failed to create clair config")
+			return r.manageError(quayConfiguration.QuayEcosystem, redhatcopv1alpha1.QuayEcosystemQuaySetupFailure, err)
+		}
+
 		// Update flags when setup is completed
 		quayConfiguration.QuayEcosystem.Status.SetupComplete = true
 
@@ -227,6 +235,17 @@ func (r *ReconcileQuayEcosystem) Reconcile(request reconcile.Request) (reconcile
 			return reconcile.Result{}, err
 		}
 
+	}
+
+	deployClairResult, err := configuration.DeployClair(metaObject)
+	if err != nil {
+		r.reconcilerBase.GetRecorder().Event(quayConfiguration.QuayEcosystem, "Warning", "Failed to Deploy Clair", err.Error())
+		return reconcile.Result{}, err
+	}
+
+	if deployClairResult != nil {
+		r.reconcilerBase.GetRecorder().Event(quayConfiguration.QuayEcosystem, "Warning", "Failed to Deploy Clair", "Failed to Deploy Clair")
+		return *deployClairResult, nil
 	}
 
 	deployQuayResult, err := configuration.DeployQuay(metaObject)

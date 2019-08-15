@@ -292,6 +292,115 @@ func GetQuayDeploymentDefinition(meta metav1.ObjectMeta, quayConfiguration *Quay
 	return quayDeployment
 }
 
+func GetClairDeploymentDefinition(meta metav1.ObjectMeta, quayConfiguration *QuayConfiguration) *appsv1.Deployment {
+
+	meta.Name = GetClairResourcesName(quayConfiguration.QuayEcosystem)
+	BuildClairResourceLabels(meta.Labels)
+
+	clairDeploymentPodSpec := corev1.PodSpec{
+		Containers: []corev1.Container{{
+			Image: constants.ClairImage,
+			Name:  meta.Name,
+			Ports: []corev1.ContainerPort{{
+				ContainerPort: 6060,
+			}, {
+				ContainerPort: 6061,
+			}},
+			VolumeMounts: []corev1.VolumeMount{corev1.VolumeMount{
+				Name:      "clair-config",
+				MountPath: "/clair/config/config.yaml",
+				SubPath:   "config.yaml",
+			}, {
+				Name:      "security-scanner",
+				MountPath: "/clair/config/security_scanner.pem",
+				SubPath:   "security_scanner.pem",
+			}, {
+				Name:      "clair-trust-ca",
+				MountPath: "/etc/pki/ca-trust/source/anchors/ca.crt",
+				SubPath:   "ca.crt",
+			}},
+		}},
+		ServiceAccountName: constants.QuayServiceAccount,
+		Volumes: []corev1.Volume{corev1.Volume{
+			Name: "clair-config",
+			VolumeSource: corev1.VolumeSource{
+				Projected: &corev1.ProjectedVolumeSource{
+					Sources: []corev1.VolumeProjection{
+						{
+							Secret: &corev1.SecretProjection{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: constants.ClairConfigSecretName,
+								},
+							},
+						},
+					},
+				},
+			},
+		}, {
+			Name: "security-scanner",
+			VolumeSource: corev1.VolumeSource{
+				Projected: &corev1.ProjectedVolumeSource{
+					Sources: []corev1.VolumeProjection{
+						{
+							Secret: &corev1.SecretProjection{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: constants.SecurityScannerKeySecretName,
+								},
+							},
+						},
+					},
+				},
+			},
+		}, {
+			Name: "clair-trust-ca",
+			VolumeSource: corev1.VolumeSource{
+				Projected: &corev1.ProjectedVolumeSource{
+					Sources: []corev1.VolumeProjection{
+						{
+							Secret: &corev1.SecretProjection{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: constants.ClairTrustCASecretName,
+								},
+							},
+						},
+					},
+				},
+			},
+		}},
+	}
+
+	if !utils.IsZeroOfUnderlyingType(quayConfiguration.QuayEcosystem.Spec.Quay.ImagePullSecretName) {
+		clairDeploymentPodSpec.ImagePullSecrets = []corev1.LocalObjectReference{corev1.LocalObjectReference{
+			Name: quayConfiguration.QuayEcosystem.Spec.Quay.ImagePullSecretName,
+		},
+		}
+	}
+
+	clairReplicas := utils.CheckValue(quayConfiguration.QuayEcosystem.Spec.Clair.Replicas, &constants.ClairReplicas)
+
+	clairDeployment := &appsv1.Deployment{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: appsv1.SchemeGroupVersion.String(),
+			Kind:       "Deployment",
+		},
+		ObjectMeta: meta,
+		Spec: appsv1.DeploymentSpec{
+			Replicas: clairReplicas.(*int32),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: meta.Labels,
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: meta.Labels,
+				},
+				Spec: clairDeploymentPodSpec,
+			},
+		},
+	}
+
+	return clairDeployment
+}
+
 func GetDatabaseDeploymentDefinition(meta metav1.ObjectMeta, quayConfiguration *QuayConfiguration) *appsv1.Deployment {
 
 	databaseDeploymentPodSpec := corev1.PodSpec{

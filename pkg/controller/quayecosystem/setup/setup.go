@@ -196,7 +196,7 @@ func (qm *QuaySetupManager) SetupQuay(quaySetupInstance *QuaySetupInstance) erro
 	// }
 
 	//TODO Change to the correct clair endpoint
-	quayConfig.Config["SECURITY_SCANNER_ENDPOINT"] = quaySetupInstance.quayConfiguration.QuayHostname
+	quayConfig.Config["SECURITY_SCANNER_ENDPOINT"] = fmt.Sprintf("http://%s", quaySetupInstance.quayConfiguration.ClairHostname)
 	quayConfig.Config["SECURITY_SCANNER_ISSUER_NAME"] = "security_scanner"
 	quayConfig.Config["FEATURE_SECURITY_SCANNER"] = true
 

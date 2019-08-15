@@ -234,7 +234,7 @@ func (c *QuayClient) newRequest(method, path string, body interface{}) (*http.Re
 	}
 	req.Header.Set("Accept", "application/json")
 	//DEBUG
-	fmt.Printf("Method: %s, URL: %s Payload: %s Header: %s\n", req.Method, req.URL, req.Body, req.Header)
+	//fmt.Printf("Method: %s, URL: %s Payload: %s Header: %s\n", req.Method, req.URL, req.Body, req.Header)
 	return req, nil
 }
 func (c *QuayClient) do(req *http.Request, v interface{}) (*http.Response, error) {
@@ -255,8 +255,9 @@ func (c *QuayClient) do(req *http.Request, v interface{}) (*http.Response, error
 	} else {
 		err = json.NewDecoder(resp.Body).Decode(v)
 	}
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("STATUS_CODE: %d, DECODED: %s\n", resp.StatusCode, respBody)
+	//respBody, _ := ioutil.ReadAll(resp.Body)
+	//DEBUG
+	//fmt.Printf("STATUS_CODE: %d, DECODED: %s\n", resp.StatusCode, respBody)
 	return resp, err
 }
 

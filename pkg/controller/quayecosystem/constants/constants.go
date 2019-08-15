@@ -11,6 +11,8 @@ const (
 	OperatorName = "quay-operator"
 	// QuayImage is the Quay image
 	QuayImage = "quay.io/redhat/quay:v3.0.3"
+	// ClairImage is the Clair image
+	ClairImage = "quay.io/redhat/clair-jwt:v3.0.4"
 	// ImagePullSecret is the name of the image pull secret for retrieving images from a protected image registry
 	ImagePullSecret = "redhat-pull-secret"
 	// RedisImage is the name of the Redis Image
@@ -39,6 +41,8 @@ const (
 	RedisServiceAccount = "redis"
 	// QuayServiceAccount is the name of the Quay ServiceAccount
 	QuayServiceAccount = "quay"
+	// ClairServiceAccount is the name of the Clair ServiceAccount
+	ClairServiceAccount = "clair"
 	// PostgresqlName is the name used to represent PostgreSQL
 	PostgresqlName = "postgresql"
 	// PostgresqlImage is the Postgresql image
@@ -119,14 +123,23 @@ const (
 	// QuaySuperuserDefaultEmail represents the default Quay superuser password
 	QuaySuperuserDefaultEmail = "quay@redhat.com"
 
+	// ClairConfigSecretName represents the default Clair config secret name
+	ClairConfigSecretName = "clair-config-secret"
+	// SecurityScannerKeySecretName represents the default security scanner key secret name
+	SecurityScannerKeySecretName = "security-scanner-key-secret"
+	// ClairTrustCASecretName represents the default Clair trust CA secret name
+	ClairTrustCASecretName = "clair-trust-ca-secret"
+
 	// RegistryStorageDefaultName is the name of the default storage
 	RegistryStorageDefaultName = "default"
 	// RegistryStorageTypeLocalStorageName is the value of the Local Quay Storage type
 	RegistryStorageTypeLocalStorageName = "LocalStorage"
 
-	// ClairTrustCASecretKey is key in the trust-ca secret representing the Quay CA Certificate
+	// ClairConfigKey is key in the Clair config secret representing the Clair configuration
+	ClairConfigKey = "config.yaml"
+	// ClairTrustCASecretKey is key in the clair trust ca secret representing the Clair trust CA Certificate
 	ClairTrustCASecretKey = "ca.crt"
-	// SecurityScannerKeySecretKey is key in the trust-ca secret representing the Quay CA Certificate
+	// SecurityScannerKeySecretKey is key in the security scanner key secret representing the security scanner private key
 	SecurityScannerKeySecretKey = "security_scanner.pem"
 
 	// QuayAppConfigSSLCertificateSecretKey is key in the app-config secret representing the SSL Certificate
@@ -176,6 +189,8 @@ var (
 	RedisReplicas int32 = 1
 	// RedisPort is the port number for Redis
 	RedisPort int32 = 6379
+	// ClairReplicas is the port number for Clair
+	ClairReplicas int32 = 1
 
 	// QuayRegistryStoragePersistentVolumeAccessModes represents the access modes for the registry storage persistent volume
 	QuayRegistryStoragePersistentVolumeAccessModes = []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany}
